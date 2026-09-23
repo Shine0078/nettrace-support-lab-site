@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Consent-based, local-only NetTrace device capability check." />
+    <title>NetTrace — Check This Device Safely</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Skip to device check</a>
+    <header class="site-header">
+      <div class="brand-block">
+        <div class="brand-mark" aria-hidden="true">NT</div>
+        <div>
+          <p class="eyebrow">Consent-based local diagnostics</p>
+          <h1>Check This Device Safely</h1>
+        </div>
+      </div>
+      <div class="header-actions">
+        <a class="button button-subtle" href="index.html">Back to dashboard</a>
+        <button id="theme-button" class="button button-subtle" type="button" aria-label="Toggle color theme">Theme</button>
+        <button class="button button-subtle" type="button" onclick="window.print()">Print</button>
+      </div>
+    </header>
+
+    <main id="main-content">
+      <section class="hero section-shell consent-hero">
+        <div class="hero-copy">
+          <p class="eyebrow">Why approval is required</p>
+          <h2>A webpage cannot silently inspect your computer</h2>
+          <p class="hero-description">Browsers are intentionally isolated from operating-system commands, logs, services, WSL and network configuration. NetTrace uses a readable PowerShell checker that the device owner must review and run explicitly.</p>
+        </div>
+        <aside class="completion-card privacy-card">
+          <p class="eyebrow">Privacy guarantee</p>
+          <h3>Your result stays on your device</h3>
+          <ul class="privacy-list">
+            <li>No upload or telemetry</li>
+            <li>No public network request</li>
+            <li>No settings changed</li>
+            <li>No username, hostname, IP or MAC stored</li>
+            <li>No credentials, files or browser data collected</li>
+          </ul>
+        </aside>
+      </section>
+
+      <section class="section-shell" aria-labelledby="browser-check-heading">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">No download required</p>
+            <h2 id="browser-check-heading">Browser-safe device diagnostics</h2>
+          </div>
+          <span class="badge status-observed">Limited by browser sandbox</span>
+        </div>
+        <p>This mode can report browser/OS hints, logical CPU threads, approximate memory where supported, screen capabilities, site-storage quota, network-quality hints, battery state and browser features. It cannot access BIOS, serial numbers, firmware, installed applications, Windows services, logs, WSL, private files or network configuration.</p>
+        <div class="consent-box">
+          <label class="consent-label">
+            <input id="browser-consent" type="checkbox" />
+            <span>I consent to display the browser-accessible details listed above on this page. I understand nothing is uploaded.</span>
+          </label>
+          <button id="run-browser-check" class="button button-primary" type="button" disabled>Run browser diagnostics</button>
+        </div>
+        <div id="browser-diagnostic-results" hidden aria-live="polite">
+          <div class="section-heading results-subheading">
+            <div>
+              <p class="eyebrow">Browser result</p>
+              <h3>Available device information</h3>
+            </div>
+            <button id="download-browser-results" class="button button-subtle" type="button">Download browser JSON</button>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th scope="col">Category</th><th scope="col">Property</th><th scope="col">Value</th><th scope="col">Availability</th></tr></thead>
+              <tbody id="browser-diagnostic-table"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="section-shell" aria-labelledby="steps-heading">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Three explicit steps</p>
+            <h2 id="steps-heading">Run, review and display the check</h2>
+          </div>
+        </div>
+        <ol class="friend-steps">
+          <li>
+            <span class="phase-number">1</span>
+            <h3>Review and download</h3>
+            <p>Open the checker as text before running it. It contains only read-only capability and localhost checks.</p>
+            <a class="button button-primary" href="../scripts/friend-device-check.ps1" download="friend-device-check.ps1">Download checker</a>
+          </li>
+          <li>
+            <span class="phase-number">2</span>
+            <h3>Run with consent</h3>
+            <p>Open PowerShell in the download folder and run:</p>
+            <pre><code>pwsh -NoProfile -File .\friend-device-check.ps1</code></pre>
+            <p>Type <strong>YES</strong> only after reviewing the scope. A sanitized JSON file will be created locally.</p>
+          </li>
+          <li>
+            <span class="phase-number">3</span>
+            <h3>Display locally</h3>
+            <p>Select the generated JSON below. JavaScript reads the file in this tab; it is not uploaded.</p>
+            <input id="result-file" type="file" accept="application/json,.json" />
+            <label class="file-picker" for="result-file">Choose NetTrace results JSON</label>
+          </li>
+        </ol>
+      </section>
+
+      <section id="device-results" class="section-shell" hidden aria-labelledby="device-results-heading" aria-live="polite">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Local result</p>
+            <h2 id="device-results-heading">Device capability summary</h2>
+          </div>
+          <span id="device-overall-status" class="status-pill status-loading">Waiting</span>
+        </div>
+        <div id="device-metrics" class="metric-grid"></div>
+        <h3>Environment</h3>
+        <div id="device-environment" class="environment-grid"></div>
+        <h3 class="results-subheading">Checks</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th scope="col">Check</th><th scope="col">Category</th><th scope="col">Result</th><th scope="col">Detail</th></tr></thead>
+            <tbody id="device-check-table"></tbody>
+          </table>
+        </div>
+        <div class="privacy-result">
+          <h3>Privacy verification</h3>
+          <ul id="device-privacy-list" class="check-list"></ul>
+        </div>
+      </section>
+
+      <section id="device-error" class="error-panel" hidden aria-live="assertive">
+        <h2>Results file could not be displayed</h2>
+        <p id="device-error-message"></p>
+      </section>
+    </main>
+
+    <footer><p>NetTrace device check • explicit consent • local file processing • no upload</p></footer>
+    <script src="friend-check.js" defer></script>
+  </body>
+</html>

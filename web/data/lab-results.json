@@ -1,0 +1,493 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-09-22T13:14:36.097578-04:00",
+  "generatedFromCommit": "d23242f",
+  "project": {
+    "name": "NetTrace Support Lab",
+    "subtitle": "Local Windows + WSL2 troubleshooting evidence dashboard",
+    "status": "PASS",
+    "branch": "main",
+    "remote": "Shine0078/Network-Troubleshooting-and-Support-Lab",
+    "scope": "Windows host, Ubuntu WSL2, localhost and synthetic data only"
+  },
+  "metrics": {
+    "scenariosPassed": 5,
+    "validationChecks": 7,
+    "designChecks": 8,
+    "evidenceItems": 9
+  },
+  "environment": [
+    {
+      "name": "Windows",
+      "value": "Build 26200 \u2022 64-bit",
+      "status": "OBSERVED"
+    },
+    {
+      "name": "Ubuntu",
+      "value": "26.04.1 LTS \u2022 WSL2",
+      "status": "PASS"
+    },
+    {
+      "name": "PowerShell",
+      "value": "7.6.5",
+      "status": "PASS"
+    },
+    {
+      "name": "Python",
+      "value": "3.13.15",
+      "status": "PASS"
+    },
+    {
+      "name": "TShark",
+      "value": "4.6.4 on Ubuntu lo",
+      "status": "PASS"
+    },
+    {
+      "name": "Git",
+      "value": "main \u2022 remote connected",
+      "status": "PASS"
+    }
+  ],
+  "scenarios": [
+    {
+      "scenario": "DNS failure",
+      "status": "PASS",
+      "symptom": "Synthetic hostname lookup fails while a loopback HTTP endpoint remains reachable.",
+      "failure_reproduced": true,
+      "repaired": true,
+      "evidence": [
+        "HTTP 200: NetTrace synthetic warehouse service",
+        "Invalid resolver port: 44721",
+        "DNS query failed as expected/observed: timed out",
+        "DNS response returned synthetic address 127.0.0.1"
+      ],
+      "root_cause": "No listener was present at the explicitly selected local DNS endpoint.",
+      "cleanup": "DNS and HTTP threads stopped; no system resolver configuration changed."
+    },
+    {
+      "scenario": "Unavailable port",
+      "status": "PASS",
+      "symptom": "The local host is reachable but the selected TCP service port is unavailable after shutdown.",
+      "failure_reproduced": true,
+      "repaired": true,
+      "evidence": [
+        "Working endpoint: 127.0.0.1:46489",
+        "HTTP 200: NetTrace synthetic warehouse service",
+        "connection failed: <urlopen error [Errno 111] Connection refused>",
+        "HTTP 200: NetTrace synthetic warehouse service"
+      ],
+      "root_cause": "The listener was stopped, leaving the port closed.",
+      "cleanup": "Local HTTP listener stopped after validation."
+    },
+    {
+      "scenario": "Incorrect endpoint",
+      "status": "PASS",
+      "symptom": "A synthetic warehouse client uses a loopback port that is not the service endpoint.",
+      "failure_reproduced": true,
+      "repaired": true,
+      "evidence": [
+        "Expected endpoint: 127.0.0.1:40009",
+        "Incorrect endpoint: 127.0.0.1:60109",
+        "connection failed: <urlopen error [Errno 111] Connection refused>",
+        "HTTP 200: NetTrace synthetic warehouse service"
+      ],
+      "root_cause": "The client endpoint did not match the listener's port.",
+      "cleanup": "No interface or route was changed; local HTTP listener stopped."
+    },
+    {
+      "scenario": "Stopped service",
+      "status": "PASS",
+      "symptom": "The service endpoint fails after its harmless local process is stopped.",
+      "failure_reproduced": true,
+      "repaired": true,
+      "evidence": [
+        "HTTP 200: NetTrace synthetic warehouse service",
+        "Normal service thread alive: True",
+        "connection failed: <urlopen error [Errno 111] Connection refused>",
+        "Stopped service thread alive: False",
+        "HTTP 200: NetTrace synthetic warehouse service"
+      ],
+      "root_cause": "The application process was not running; the network stack itself remained available.",
+      "cleanup": "Restarted listener stopped after validation."
+    },
+    {
+      "scenario": "Permission failure",
+      "status": "PASS",
+      "symptom": "An unprivileged service account cannot read a synthetic inventory file after permissions are restricted.",
+      "failure_reproduced": true,
+      "repaired": true,
+      "evidence": [
+        "Synthetic file: synthetic-inventory.txt",
+        "Mode changed from readable to 000 for the test.",
+        "Restricted read exit=1; stderr=cat: /tmp/nettrace-permission-ozxjt5r1/synthetic-inventory.txt: Permission denied",
+        "Restored read exit=0; synthetic content returned=True"
+      ],
+      "root_cause": "Unix permission bits denied the unprivileged account read access.",
+      "cleanup": "Permissions restored to 0644 and the synthetic directory deleted in finally."
+    }
+  ],
+  "validation": [
+    {
+      "name": "Windows baseline",
+      "detail": "Ran twice with timestamped output",
+      "status": "PASS"
+    },
+    {
+      "name": "Linux baseline",
+      "detail": "Ran twice under Ubuntu WSL2",
+      "status": "PASS"
+    },
+    {
+      "name": "Five controlled failures",
+      "detail": "Failure and recovery asserted",
+      "status": "PASS"
+    },
+    {
+      "name": "Packet analysis",
+      "detail": "DNS, TCP, TLS, HTTP and SYN evidence",
+      "status": "PASS"
+    },
+    {
+      "name": "Portable device check",
+      "detail": "Explicit consent, local JSON and privacy contract validated",
+      "status": "PASS"
+    },
+    {
+      "name": "Privacy scan",
+      "detail": "No tracked private paths or common secret patterns",
+      "status": "PASS"
+    },
+    {
+      "name": "Cleanup",
+      "detail": "Synthetic services and raw capture resources removed",
+      "status": "PASS"
+    }
+  ],
+  "architecture": {
+    "viewBox": "0 0 1120 620",
+    "boundaries": [
+      {
+        "id": "host-boundary",
+        "label": "MY COMPUTER / TRUST BOUNDARY",
+        "x": 25,
+        "y": 30,
+        "width": 1070,
+        "height": 535,
+        "kind": "trusted"
+      },
+      {
+        "id": "wsl-boundary",
+        "label": "WSL2 TRUST BOUNDARY",
+        "x": 390,
+        "y": 95,
+        "width": 345,
+        "height": 335,
+        "kind": "isolated"
+      },
+      {
+        "id": "external-boundary",
+        "label": "EXTERNAL / UNTRUSTED",
+        "x": 790,
+        "y": 100,
+        "width": 255,
+        "height": 250,
+        "kind": "external"
+      }
+    ],
+    "nodes": [
+      {
+        "id": "windows",
+        "label": "Windows Host",
+        "detail": [
+          "PowerShell \u2022 Git",
+          "GitHub Desktop \u2022 Wireshark"
+        ],
+        "x": 75,
+        "y": 175,
+        "width": 250,
+        "height": 120,
+        "kind": "host"
+      },
+      {
+        "id": "ubuntu",
+        "label": "WSL2 Ubuntu",
+        "detail": [
+          "Linux baseline",
+          "Scenario harness",
+          "TShark loopback capture"
+        ],
+        "x": 435,
+        "y": 155,
+        "width": 255,
+        "height": 135,
+        "kind": "linux"
+      },
+      {
+        "id": "service",
+        "label": "Local Test Services",
+        "detail": [
+          "127.0.0.1 only",
+          "HTTP \u2022 HTTPS \u2022 DNS"
+        ],
+        "x": 435,
+        "y": 325,
+        "width": 255,
+        "height": 95,
+        "kind": "service"
+      },
+      {
+        "id": "internet",
+        "label": "Internet Reference",
+        "detail": [
+          "Disabled by default",
+          "Never packet-captured"
+        ],
+        "x": 815,
+        "y": 175,
+        "width": 205,
+        "height": 105,
+        "kind": "external"
+      },
+      {
+        "id": "evidence",
+        "label": "Sanitized Evidence",
+        "detail": [
+          "Tickets \u2022 diagrams",
+          "Screenshots \u2022 reports"
+        ],
+        "x": 75,
+        "y": 390,
+        "width": 250,
+        "height": 105,
+        "kind": "evidence"
+      }
+    ],
+    "edges": [
+      {
+        "from": "windows",
+        "to": "ubuntu",
+        "label": "local commands",
+        "kind": "trusted"
+      },
+      {
+        "from": "ubuntu",
+        "to": "service",
+        "label": "loopback traffic",
+        "kind": "local"
+      },
+      {
+        "from": "windows",
+        "to": "evidence",
+        "label": "sanitized results",
+        "kind": "evidence"
+      },
+      {
+        "from": "windows",
+        "to": "internet",
+        "label": "opt-in only",
+        "kind": "blocked"
+      }
+    ]
+  },
+  "designChecks": [
+    {
+      "name": "Trust boundaries represented",
+      "detail": "Windows, WSL2 and external zones are explicit",
+      "status": "PASS"
+    },
+    {
+      "name": "Owned systems identified",
+      "detail": "Host, Ubuntu and local services are marked as lab-owned",
+      "status": "PASS"
+    },
+    {
+      "name": "Traffic capture constrained",
+      "detail": "Only Ubuntu lo / 127.0.0.1 is captured",
+      "status": "PASS"
+    },
+    {
+      "name": "External traffic isolated",
+      "detail": "Internet checks remain disabled by default",
+      "status": "PASS"
+    },
+    {
+      "name": "Evidence is sanitized",
+      "detail": "Raw logs and pcap files are excluded from Git",
+      "status": "PASS"
+    },
+    {
+      "name": "Recovery path documented",
+      "detail": "Each failure has corrective action and validation",
+      "status": "PASS"
+    },
+    {
+      "name": "Consent boundary enforced",
+      "detail": "The browser cannot run checks; the device owner explicitly runs the read-only checker",
+      "status": "PASS"
+    },
+    {
+      "name": "Cleanup verified",
+      "detail": "Temporary services, files and captures are removed",
+      "status": "PASS"
+    }
+  ],
+  "timeline": [
+    {
+      "phase": "1",
+      "title": "Environment & safety",
+      "detail": "Prerequisites, boundaries and Git controls",
+      "status": "PASS"
+    },
+    {
+      "phase": "2",
+      "title": "Baseline automation",
+      "detail": "Windows and Linux timestamped diagnostics",
+      "status": "PASS"
+    },
+    {
+      "phase": "3",
+      "title": "Architecture & method",
+      "detail": "Diagram, commands, workflow and threat model",
+      "status": "PASS"
+    },
+    {
+      "phase": "4",
+      "title": "Failure scenarios",
+      "detail": "Five controlled failures and support tickets",
+      "status": "PASS"
+    },
+    {
+      "phase": "5",
+      "title": "Packet analysis",
+      "detail": "Local DNS, TCP, TLS and HTTP evidence",
+      "status": "PASS"
+    },
+    {
+      "phase": "6",
+      "title": "Validation & cleanup",
+      "detail": "Automated checks, privacy scan and final report",
+      "status": "PASS"
+    },
+    {
+      "phase": "7",
+      "title": "Portable device check",
+      "detail": "Consent-based read-only checks and local result import",
+      "status": "PASS"
+    }
+  ],
+  "evidence": [
+    {
+      "title": "Completion report",
+      "href": "../docs/completion-report.md",
+      "type": "Report"
+    },
+    {
+      "title": "Network diagram",
+      "href": "../docs/network-diagram.png",
+      "type": "Architecture"
+    },
+    {
+      "title": "Scenario evidence",
+      "href": "../docs/scenario-evidence.md",
+      "type": "Testing"
+    },
+    {
+      "title": "Packet analysis",
+      "href": "../docs/packet-analysis.md",
+      "type": "Network"
+    },
+    {
+      "title": "Threat model",
+      "href": "../docs/threat-model.md",
+      "type": "Security"
+    },
+    {
+      "title": "DNS screenshot",
+      "href": "../screenshots/wireshark-dns.png",
+      "type": "Evidence"
+    },
+    {
+      "title": "TCP/TLS screenshot",
+      "href": "../screenshots/wireshark-tcp-tls.png",
+      "type": "Evidence"
+    },
+    {
+      "title": "Support tickets",
+      "href": "../tickets/001-dns-failure.md",
+      "type": "Operations"
+    },
+    {
+      "title": "Check another device",
+      "href": "friend-check.html",
+      "type": "Local tool"
+    }
+  ],
+  "fileChecks": [
+    {
+      "path": "docs/completion-report.md",
+      "status": "PASS"
+    },
+    {
+      "path": "docs/network-diagram.png",
+      "status": "PASS"
+    },
+    {
+      "path": "docs/network-diagram.drawio",
+      "status": "PASS"
+    },
+    {
+      "path": "docs/packet-analysis.md",
+      "status": "PASS"
+    },
+    {
+      "path": "scripts/windows-baseline.ps1",
+      "status": "PASS"
+    },
+    {
+      "path": "scripts/linux-baseline.sh",
+      "status": "PASS"
+    },
+    {
+      "path": "scripts/lab-scenarios.py",
+      "status": "PASS"
+    },
+    {
+      "path": "tests/validate_project.py",
+      "status": "PASS"
+    },
+    {
+      "path": "screenshots/wireshark-dns.png",
+      "status": "PASS"
+    },
+    {
+      "path": "screenshots/wireshark-tcp-tls.png",
+      "status": "PASS"
+    },
+    {
+      "path": "screenshots/wireshark-https-metadata.png",
+      "status": "PASS"
+    }
+  ],
+  "researchSources": [
+    {
+      "title": "Microsoft NCSI troubleshooting",
+      "url": "https://learn.microsoft.com/en-us/windows-server/networking/ncsi/ncsi-troubleshooting-guide"
+    },
+    {
+      "title": "Microsoft Performance Monitor troubleshooting",
+      "url": "https://learn.microsoft.com/en-us/troubleshoot/windows-server/support-tools/troubleshoot-issues-performance-monitor"
+    },
+    {
+      "title": "NIST SP 800-61 Rev. 3",
+      "url": "https://csrc.nist.gov/pubs/sp/800/61/r3/final"
+    },
+    {
+      "title": "NIST Cybersecurity Framework 2.0",
+      "url": "https://www.nist.gov/cyberframework"
+    },
+    {
+      "title": "CISA logging guidance",
+      "url": "https://www.cisa.gov/audiences/small-and-medium-businesses/secure-your-business/use-logging-on-business-systems"
+    }
+  ]
+}

@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Local results dashboard for the NetTrace Windows and WSL2 support lab." />
+    <title>NetTrace Support Lab — Results</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Skip to results</a>
+    <header class="site-header">
+      <div class="brand-block">
+        <div class="brand-mark" aria-hidden="true">NT</div>
+        <div>
+          <p class="eyebrow">Local support engineering dashboard</p>
+          <h1 id="project-name">NetTrace Support Lab</h1>
+        </div>
+      </div>
+      <div class="header-actions">
+        <span id="overall-status" class="status-pill status-loading">Loading</span>
+        <button id="theme-button" class="button button-subtle" type="button" aria-label="Toggle color theme">Theme</button>
+        <button id="print-button" class="button button-subtle" type="button">Print</button>
+        <a id="download-button" class="button button-primary" href="data/lab-results.json" download="nettrace-lab-results.json">Export JSON</a>
+      </div>
+    </header>
+
+    <nav class="section-nav" aria-label="Dashboard sections">
+      <a href="#overview">Overview</a>
+      <a href="#architecture">Connection diagram</a>
+      <a href="#scenarios">Scenarios</a>
+      <a href="#validation">Validation</a>
+      <a href="#evidence">Evidence</a>
+      <a href="friend-check.html">Check a device</a>
+      <a href="#next-goal">GOAL2</a>
+    </nav>
+
+    <main id="main-content">
+      <section id="overview" class="hero section-shell">
+        <div class="hero-copy">
+          <p class="eyebrow">Verified local environment</p>
+          <h2 id="project-subtitle">Windows + WSL2 troubleshooting results</h2>
+          <p id="project-scope" class="hero-description"></p>
+          <div class="metadata-row">
+            <span>Branch <strong id="branch-value">—</strong></span>
+            <span>Source commit <strong id="commit-value">—</strong></span>
+            <span>Generated <strong id="generated-value">—</strong></span>
+          </div>
+        </div>
+        <aside class="completion-card" aria-labelledby="completion-heading">
+          <p class="eyebrow">Completion gate</p>
+          <h3 id="completion-heading">System design verified</h3>
+          <p>The dashboard is generated from the lab’s sanitized evidence and validation artifacts.</p>
+          <div class="completion-meter" aria-hidden="true"><span id="completion-meter-fill"></span></div>
+          <p id="completion-label" class="completion-label">Checking results…</p>
+        </aside>
+      </section>
+
+      <section class="section-shell" aria-labelledby="metrics-heading">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">At a glance</p>
+            <h2 id="metrics-heading">Completion metrics</h2>
+          </div>
+        </div>
+        <div id="metric-grid" class="metric-grid" aria-live="polite"></div>
+      </section>
+
+      <section class="section-shell" aria-labelledby="environment-heading">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Test environment</p>
+            <h2 id="environment-heading">Systems and tools</h2>
+          </div>
+          <p>Version details are sanitized and contain no private adapter information.</p>
+        </div>
+        <div id="environment-grid" class="environment-grid"></div>
+      </section>
+
+      <section class="section-shell" aria-labelledby="timeline-heading">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">How the lab got here</p>
+            <h2 id="timeline-heading">Implementation and validation path</h2>
+          </div>
+        </div>
+        <ol id="phase-timeline" class="phase-timeline"></ol>
+      </section>
+
+      <section id="architecture" class="section-shell" aria-labelledby="architecture-heading">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Generated system design</p>
+            <h2 id="architecture-heading">Connection and trust-boundary diagram</h2>
+          </div>
+          <p>The diagram is rendered from the same JSON used by the design checks below.</p>
+        </div>
+        <div class="architecture-layout">
+          <div class="diagram-panel">
+            <svg id="architecture-svg" role="img" aria-labelledby="diagram-title diagram-description"></svg>
+          </div>
+          <aside class="design-panel" aria-labelledby="design-heading">
+            <p class="eyebrow">Design gate</p>
+            <h3 id="design-heading">System design checks</h3>
+            <ul id="design-checks" class="check-list"></ul>
+          </aside>
+        </div>
+      </section>
+
+      <section id="scenarios" class="section-shell" aria-labelledby="scenarios-heading">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Controlled failures</p>
+            <h2 id="scenarios-heading">Failure and recovery results</h2>
+          </div>
+          <p>Every scenario uses localhost or synthetic WSL data.</p>
+        </div>
+        <div id="scenario-grid" class="scenario-grid"></div>
+      </section>
+
+      <section id="validation" class="section-shell" aria-labelledby="validation-heading">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Acceptance criteria</p>
+            <h2 id="validation-heading">Validation matrix</h2>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th scope="col">Check</th><th scope="col">Evidence</th><th scope="col">Status</th></tr>
+            </thead>
+            <tbody id="validation-table"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="evidence" class="section-shell" aria-labelledby="evidence-heading">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Reviewed artifacts</p>
+            <h2 id="evidence-heading">Evidence library</h2>
+          </div>
+          <p>Raw reports, packet captures, keys and certificates are excluded.</p>
+        </div>
+        <div id="evidence-grid" class="evidence-grid"></div>
+      </section>
+
+      <section id="next-goal" class="section-shell next-goal" aria-labelledby="next-goal-heading">
+        <div>
+          <p class="eyebrow">Research-backed roadmap</p>
+          <h2 id="next-goal-heading">GOAL2 expands the support lab</h2>
+          <p>Asset inventory, event correlation, performance baselines, incident response, backup/restore testing, escalation, knowledge management and accessible reporting are defined in the next authoritative project brief.</p>
+          <a class="button button-primary" href="../GOAL2.txt">Open GOAL2.txt</a>
+        </div>
+        <div>
+          <h3>Authoritative references</h3>
+          <ul id="source-list" class="source-list"></ul>
+        </div>
+      </section>
+
+      <section id="error-panel" class="error-panel" hidden aria-live="assertive">
+        <h2>Dashboard data could not be loaded</h2>
+        <p id="error-message"></p>
+        <p>Run <code>py -3 scripts/export-web-results.py</code>, then serve the repository over localhost.</p>
+      </section>
+    </main>
+
+    <footer>
+      <p>NetTrace Support Lab • localhost-only results view • no telemetry or external services</p>
+    </footer>
+
+    <noscript>This dashboard requires JavaScript to render the generated results.</noscript>
+    <script src="app.js" defer></script>
+  </body>
+</html>

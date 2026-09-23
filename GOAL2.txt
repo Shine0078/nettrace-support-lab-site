@@ -1,0 +1,247 @@
+# GOAL2 — NetTrace Support Operations Lab
+
+## Role and authority
+
+Act as a senior IT support engineer, network engineer, security mentor, service-management reviewer, and technical documentation lead. Extend the existing NetTrace Support Lab without weakening any safety, privacy, reproducibility, or evidence requirements from the completed first goal.
+
+The existing repository and its current tests are the baseline. Preserve all useful work. Do not claim GOAL2 is complete until every acceptance criterion in this file is tested against the current worktree.
+
+## Purpose
+
+Advance the lab from five isolated troubleshooting exercises into a small support-operations platform. The finished project should demonstrate how a technician understands assets and dependencies, collects correlated evidence, prioritizes incidents, communicates with users, restores service, verifies recovery, and captures reusable knowledge.
+
+## Safety boundaries
+
+- Work only on the local Windows host, WSL2 Ubuntu, localhost, synthetic files, and explicitly isolated virtual lab systems.
+- Bind every lab web service or API to `127.0.0.1` by default.
+- Do not scan public systems, employer systems, school systems, neighboring networks, or production services.
+- Do not change the physical adapter, home router, system DNS, firewall, VPN, or proxy configuration for a simulation.
+- Do not store or publish credentials, tokens, private keys, real usernames, private network identifiers, employer data, or packet captures.
+- Keep raw logs, packet captures, generated reports, temporary certificates, database files containing raw evidence, and PID files ignored by Git.
+- Web controls must never execute arbitrary shell commands. Any future command runner must use a fixed allowlist, normal-user privileges, loopback binding, input validation, CSRF protection, explicit confirmation, timeouts, and a complete audit record.
+- Use synthetic warehouse, inventory, ERP, users, systems, assets, incidents, and business impacts.
+
+## Research basis
+
+GOAL2 requirements are informed by these authoritative sources:
+
+1. Microsoft NCSI troubleshooting guidance recommends correlating event logs with packet-capture timestamps and reproducing the issue deliberately:
+   https://learn.microsoft.com/en-us/windows-server/networking/ncsi/ncsi-troubleshooting-guide
+2. Microsoft Performance Monitor troubleshooting guidance emphasizes questions before collection, reproducibility, patterns, and time-based performance data:
+   https://learn.microsoft.com/en-us/troubleshoot/windows-server/support-tools/troubleshoot-issues-performance-monitor
+3. NIST SP 800-61 Rev. 3 integrates preparation, detection, response, recovery, and lessons learned into cybersecurity risk management:
+   https://csrc.nist.gov/pubs/sp/800/61/r3/final
+4. NIST Cybersecurity Framework 2.0 identifies governance, asset inventory, authorized network-flow representation, protection, detection, response, and recovery outcomes:
+   https://www.nist.gov/cyberframework
+5. CISA logging guidance emphasizes useful business-system logs, roles and responsibilities, incident contacts, and review of changes and access:
+   https://www.cisa.gov/audiences/small-and-medium-businesses/secure-your-business/use-logging-on-business-systems
+6. CISA Cross-Sector Cybersecurity Performance Goals organize essential practices around Govern, Identify, Protect, Detect, Respond, and Recover:
+   https://www.cisa.gov/cross-sector-cybersecurity-performance-goals
+
+Do not copy source text. Translate the guidance into original, beginner-friendly lab requirements and cite the sources in final documentation.
+
+## Capability 1 — local results web application
+
+Maintain a standards-based local dashboard under `web/` that:
+
+- Runs only on `127.0.0.1` with no analytics, external fonts, CDN, telemetry, cookies, or cloud dependency.
+- Reads generated, sanitized JSON rather than raw logs or packet captures.
+- Displays overall status, environment, five original scenarios, acceptance tests, evidence links, and the implementation timeline.
+- Generates the complete connection diagram from structured architecture data using accessible SVG.
+- Shows Windows, WSL2, local services, sanitized evidence, external/untrusted references, traffic direction, capture scope, and trust boundaries.
+- Runs system-design checks against the same nodes, edges, boundaries, and evidence paths used to render the diagram.
+- Clearly shows which checks passed, what evidence proves them, and what limitations remain.
+- Provides print and JSON export controls.
+- Supports keyboard navigation, visible focus, semantic headings/tables, readable contrast, reduced motion, responsive layouts, and a useful no-JavaScript/error message.
+- Never exposes machine-specific paths, private IP addresses, MAC addresses, credentials, raw packet data, or generated private reports.
+- Provides a portable, consent-based device checker for another Windows device. The webpage must explain that it cannot silently inspect the OS; the owner reviews and runs a read-only local checker, then imports sanitized JSON locally with no upload.
+
+Required files:
+
+- `web/index.html`
+- `web/styles.css`
+- `web/app.js`
+- `web/data/lab-results.json`
+- `scripts/export-web-results.py`
+- `scripts/start-dashboard.ps1`
+- `scripts/stop-dashboard.ps1`
+- `tests/validate_web.py`
+- `web/friend-check.html`
+- `web/friend-check.js`
+- `scripts/friend-device-check.ps1`
+- `tests/validate_friend_check.py`
+
+## Capability 2 — asset and dependency inventory
+
+Create a synthetic support inventory that records:
+
+- Asset ID, fictional owner/team, business function, operating system, environment, criticality, support tier, data classification, lifecycle state, and backup status.
+- Services, ports, protocols, process owner, expected health check, startup method, log source, dependency, and recovery priority.
+- Authorized communication paths and expected data flows.
+- Upstream and downstream dependencies for a fictional warehouse/ERP workflow.
+- A sanitized dependency graph rendered in the dashboard.
+
+Required files:
+
+- `data/assets.json`
+- `data/services.json`
+- `docs/asset-inventory.md`
+- `docs/service-dependency-map.md`
+- `tests/validate_inventory.py`
+
+Use fictional entries only. Do not automatically discover or publish real host inventory.
+
+## Capability 3 — event and log correlation
+
+Add safe collectors and exercises for:
+
+- Windows Event Log samples generated by the lab or synthetic fixtures.
+- Ubuntu `journalctl` or application log samples generated by local services.
+- Application request/error logs with a correlation ID.
+- Timestamps in ISO 8601 including time-zone offsets.
+- A merged incident timeline that aligns service state, client error, operating-system event, and packet evidence.
+- Log level, source, event ID, correlation ID, scenario ID, and privacy classification.
+- Retention and deletion rules for raw and sanitized evidence.
+
+Create `docs/logging-and-correlation.md`, `scripts/build-incident-timeline.py`, a sanitized sample timeline, and tests that reject missing timestamps or private identifiers.
+
+## Capability 4 — performance troubleshooting
+
+Add safe, local performance baselines for CPU, memory, disk, process count, and service response time.
+
+Create at least three controlled performance scenarios:
+
+1. Short synthetic CPU load with a strict duration and cleanup.
+2. Local service latency with a bounded delay.
+3. Disk-space or file-growth warning using a size-limited synthetic directory.
+
+Each scenario must include normal baseline, symptom, business impact, hypothesis, measurement, smallest change, validation, cleanup, limitation, and ticket. Never run an unbounded stress test or fill a real disk.
+
+## Capability 5 — expanded network troubleshooting
+
+Add safe scenarios for concepts that are not fully covered by GOAL1:
+
+- DHCP versus static addressing using documentation or an isolated namespace/fixture, not the physical adapter.
+- APIPA/link-local interpretation.
+- Default-gateway and route-selection analysis using synthetic route tables or isolated namespaces.
+- Proxy misconfiguration using a process-local environment variable that is restored.
+- TLS certificate validation failure using a temporary localhost certificate.
+- Packet loss, retry, timeout, and latency using bounded local test behavior.
+- IPv4 versus IPv6 loopback behavior.
+- Firewall reasoning through saved/synthetic rules or isolated controls; do not change the host firewall for the minimum version.
+
+Create one support ticket per implemented scenario and validate cleanup.
+
+## Capability 6 — support operations and service management
+
+Create a fictional service-desk workflow with:
+
+- Ticket states: New, Assigned, In Progress, Pending User, Pending Vendor, Resolved, Closed, and Reopened.
+- Impact, urgency, priority, severity, affected users, affected service, workaround, owner, escalation target, due time, and resolution code.
+- A documented priority matrix and synthetic SLA targets.
+- Functional and hierarchical escalation paths.
+- User-facing acknowledgement, status update, resolution, and closure templates.
+- Shift-handoff checklist and evidence handoff.
+- Major-incident timeline and post-incident review.
+- Known-error record and workaround.
+- Knowledge-base article generated only after a fix is verified.
+- Quality review checking clarity, reproducibility, privacy, root cause, validation, and remaining risk.
+
+Required documents:
+
+- `docs/priority-and-severity.md`
+- `docs/escalation-matrix.md`
+- `docs/communication-templates.md`
+- `docs/shift-handoff.md`
+- `docs/post-incident-review-template.md`
+- `knowledge-base/`
+
+## Capability 7 — backup, restore, and change control
+
+Implement a synthetic configuration backup/restore test:
+
+- Record a known-good configuration checksum.
+- Make one bounded synthetic change.
+- Detect configuration drift.
+- Restore the known-good file.
+- Verify content and checksum.
+- Record change reason, risk, test plan, rollback plan, validation, owner, and status.
+
+Never back up or modify a real router, adapter, firewall, credential store, or workplace configuration.
+
+Required files:
+
+- `scripts/test-config-rollback.py`
+- `docs/change-management.md`
+- `docs/backup-and-recovery.md`
+- `tickets/change-record-template.md`
+
+## Capability 8 — incident response and security maturity
+
+Map the lab to Govern, Identify, Protect, Detect, Respond, and Recover without claiming certification or compliance.
+
+Add:
+
+- Incident classification and escalation criteria.
+- Evidence-integrity checksums for sanitized artifacts.
+- A synthetic chain-of-custody record.
+- Roles and responsibilities for technical, communications, business continuity, and legal escalation (fictional only).
+- Recovery priorities based on fictional asset criticality.
+- Lessons-learned actions with owner and due date.
+- A residual-risk register.
+
+## Capability 9 — validation and quality gates
+
+Create automated tests that verify:
+
+- JSON schemas and required fields.
+- Unique asset, service, ticket, and correlation IDs.
+- All diagram edges reference valid nodes.
+- Every critical asset has an owner, health check, log source, dependency, backup status, and recovery priority.
+- Every incident has impact, urgency, priority, timeline, evidence, corrective action, validation, communication, and remaining risk.
+- All generated web data is sanitized.
+- The dashboard loads over localhost and has no external requests.
+- Keyboard navigation and required semantic landmarks exist.
+- All temporary resources are removed after tests.
+- Git excludes raw logs, captures, secrets, database files, PIDs, and temporary certificates.
+- Current GOAL1 validation continues to pass without regression.
+
+## Required working method
+
+Work phase by phase. At the start of each phase state the objective, files, terms, risks, commands, expected results, and rollback. After each action state what changed, why, evidence, validation, cleanup, and next step. Fix one error at a time and record the lesson. Do not replace real execution with invented results.
+
+Create meaningful commits for real changes only. Do not create artificial commits to meet a count.
+
+## GOAL2 acceptance criteria
+
+GOAL2 is complete only when all of the following are proven:
+
+- The original GOAL1 validators still pass.
+- The local dashboard starts through the documented command and loads from `127.0.0.1`.
+- The dashboard shows current generated data, not hard-coded HTML result cards.
+- The SVG connection diagram is generated from structured data.
+- All diagram nodes, edges, and trust boundaries pass referential validation.
+- System-design checks show PASS only when their underlying evidence exists.
+- Dashboard print and JSON export work.
+- The page is responsive, keyboard accessible, and has no required external dependency.
+- Asset and service inventories are synthetic, complete, unique, and validated.
+- Logs from at least three local sources are correlated by timestamp and correlation ID.
+- Three bounded performance failures are reproduced, repaired, and cleaned up.
+- At least four expanded network scenarios are reproduced and documented safely.
+- Priority, severity, SLA, escalation, communication, handoff, known-error, knowledge-base, and post-incident workflows are documented and tested with synthetic tickets.
+- Configuration drift is detected and a checksum-verified rollback succeeds.
+- Incident response artifacts cover preparation, detection, response, recovery, and lessons learned.
+- No raw logs, packet captures, private keys, secrets, private paths, employer data, or real personal information are tracked.
+- All generated resources and processes are cleaned up.
+- Git history contains clear, professional commits.
+- `README.md` and a new `docs/goal2-completion-report.md` allow another beginner to reproduce and explain the work.
+
+## Final GOAL2 portfolio language
+
+Use this resume bullet only after every GOAL2 criterion is verified:
+
+“Extended a Windows/Linux support lab into a local operations dashboard with asset and dependency mapping, correlated logs, performance diagnostics, incident workflows, recovery testing, and automated evidence validation.”
+
+Use this interview explanation only after completion:
+
+“I expanded my troubleshooting lab into a small support-operations platform. It inventories synthetic systems and dependencies, correlates local logs and packet evidence, prioritizes and escalates incidents, tests performance and recovery scenarios, verifies configuration rollback, and publishes only sanitized results through a localhost dashboard. Every feature has an automated quality gate and cleanup path.”
