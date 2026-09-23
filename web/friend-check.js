@@ -7,7 +7,6 @@ const errorMessage = document.getElementById("device-error-message");
 const browserConsent = document.getElementById("browser-consent");
 const runBrowserCheck = document.getElementById("run-browser-check");
 const browserResults = document.getElementById("browser-diagnostic-results");
-let browserDiagnosticData = null;
 
 function clear(element) {
   while (element.firstChild) element.removeChild(element.firstChild);
@@ -252,6 +251,7 @@ function renderBrowserDiagnostics(data) {
     row.append(available);
     table.append(row);
   });
+  document.getElementById("download-browser-results").href = `data:application/json;charset=utf-8,${encodeURIComponent(`${JSON.stringify(data, null, 2)}\n`)}`;
   browserResults.hidden = false;
   browserResults.scrollIntoView({ behavior: "smooth", block: "start" });
 }
@@ -280,7 +280,7 @@ runBrowserCheck.addEventListener("click", async () => {
   runBrowserCheck.disabled = true;
   runBrowserCheck.textContent = "Checking…";
   try {
-    browserDiagnosticData = await collectBrowserDiagnostics();
+    const browserDiagnosticData = await collectBrowserDiagnostics();
     renderBrowserDiagnostics(browserDiagnosticData);
   } catch (error) {
     showError(error);
@@ -288,19 +288,6 @@ runBrowserCheck.addEventListener("click", async () => {
     runBrowserCheck.textContent = "Run browser diagnostics";
     runBrowserCheck.disabled = !browserConsent.checked;
   }
-});
-
-document.getElementById("download-browser-results").addEventListener("click", () => {
-  if (!browserDiagnosticData) return;
-  const blob = new Blob([`${JSON.stringify(browserDiagnosticData, null, 2)}\n`], { type: "application/json" });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = "nettrace-browser-results.json";
-  document.body.append(link);
-  link.click();
-  link.remove();
-  URL.revokeObjectURL(url);
 });
 
 document.getElementById("theme-button").addEventListener("click", () => {
