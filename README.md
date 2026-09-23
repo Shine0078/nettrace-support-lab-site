@@ -6,6 +6,10 @@ NetTrace Support Lab is a beginner-friendly Windows and Linux practice environme
 
 The repository also includes a localhost results dashboard and a research-backed [`GOAL2.txt`](GOAL2.txt) roadmap for the next support-operations phase.
 
+Public sanitized site: **https://shine0078.github.io/nettrace-support-lab-site/web/**
+
+Public consent-based device check: **https://shine0078.github.io/nettrace-support-lab-site/web/friend-check.html**
+
 ## What a beginner will learn
 
 An **IP address** identifies an interface, a **route** chooses where packets go, a **DNS lookup** translates a name into an address, a **port** identifies a service, and a **permission** controls access to a file. The lab deliberately tests these layers separately so a learner can explain why a symptom is DNS, connectivity, a closed port, a stopped process, or a permission problem.
@@ -37,6 +41,8 @@ Detailed operation and validation are documented in [`docs/dashboard.md`](docs/d
 ### Checking a friend's device safely
 
 A web link cannot silently inspect another computer. The dashboard therefore provides a consent-based flow at `http://127.0.0.1:8765/web/friend-check.html`: the device owner reviews and runs [`scripts/friend-device-check.ps1`](scripts/friend-device-check.ps1), then selects the generated JSON in the page. The JSON is processed locally in the browser and is not uploaded. The checker does not store usernames, hostnames, addresses, MACs, credentials, files, DNS servers, gateways, ports, or process IDs.
+
+The public page also offers browser-safe diagnostics after an explicit consent checkbox. It can show browser/OS hints, logical processor threads, approximate memory, display, storage quota, connection-quality and feature support where available. A browser cannot expose BIOS, firmware, serials, installed services, logs, WSL, private files, or full network configuration. Deployment architecture and update commands are documented in [`docs/public-deployment.md`](docs/public-deployment.md).
 
 ## Repository identity
 

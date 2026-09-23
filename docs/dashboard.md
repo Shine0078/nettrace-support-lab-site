@@ -73,6 +73,8 @@ The dashboard includes `web/friend-check.html` for checking another Windows devi
 
 The PowerShell checker performs read-only version, tool, WSL, loopback, adapter-count, listener-count, and least-privilege checks. It records no usernames, hostnames, addresses, MAC addresses, DNS servers, gateways, ports, process IDs, credentials, personal files, browser data, or raw logs. The page uses the File API to process JSON locally and makes no upload request.
 
+The public page additionally provides a no-download browser diagnostic mode after an explicit consent checkbox. It uses standards-based browser hints only and clearly marks the BIOS, firmware, serial-number, installed-service, log, WSL, file, and network-configuration limitations. See `docs/public-deployment.md` for public URLs and the sanitized deployment model.
+
 Validate the complete flow with:
 
 ```powershell
